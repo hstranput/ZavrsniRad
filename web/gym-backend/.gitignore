@@ -1,0 +1,10 @@
+# Ovisnosti
+node_modules/
+
+# Log datoteke
+*.log
+logs/
+
+# Environment varijable
+.env
+

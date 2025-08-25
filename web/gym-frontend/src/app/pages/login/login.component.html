@@ -1,0 +1,50 @@
+<div class="row justify-content-center mt-5">
+  <div class="col-md-6 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4">Prijava</h3>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email adresa</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-control"
+              formControlName="email"
+              [ngClass]="{ 'is-invalid': submitted && email?.invalid }">
+            <div *ngIf="submitted && email?.invalid" class="invalid-feedback">
+              <div *ngIf="email?.errors?.['required']">Email je obavezan.</div>
+              <div *ngIf="email?.errors?.['email']">Email nije ispravnog formata.</div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Lozinka</label>
+            <input 
+              type="password" 
+              id="password" 
+              class="form-control"
+              formControlName="password"
+              [ngClass]="{ 'is-invalid': submitted && password?.invalid }">
+            <div *ngIf="submitted && password?.invalid" class="invalid-feedback">
+              <div *ngIf="password?.errors?.['required']">Lozinka je obavezna.</div>
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Prijavi se
+            </button>
+          </div>
+
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+            {{ errorMessage }}
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,64 @@
+<h2>Današnja Statistika</h2>
+<hr>
+
+<p class="lead" *ngIf="(dailyUniqueCount$ | async) as count">
+  Ukupan broj jedinstvenih posjetitelja danas: <strong>{{ count }}</strong>
+</p>
+
+<div *ngIf="dailyGroupedVisits$ | async as groupedVisits">
+  <div *ngIf="groupedVisits.length > 0; else noDailyVisits" class="user-visit-list">
+
+    <div *ngFor="let group of groupedVisits" class="user-visit-item">
+      <div class="user-visit-header" (click)="toggleVisits(group.user._id)">
+        <span><strong>{{ group.user.name }}</strong> ({{ group.user.email }})</span>
+        <span class="badge bg-primary rounded-pill">{{ group.visitCount }} posjeta</span>
+      </div>
+
+      <div *ngIf="expandedUserId === group.user._id" class="user-visit-details">
+        <ul class="list-group">
+          <li *ngFor="let visit of group.visits" class="list-group-item d-flex justify-content-between align-items-center">
+            Vrijeme ulaska: {{ visit.checkInTime | date:'HH:mm' }}
+            <span>
+              Vrijeme izlaska: {{ visit.checkOutTime ? (visit.checkOutTime | date:'HH:mm') : 'Još je unutra' }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <ng-template #noDailyVisits>
+    <div class="alert alert-info">Danas još nije bilo zabilježenih dolazaka.</div>
+  </ng-template>
+</div>
+
+
+
+
+<hr class="my-5">
+
+<h2>Statistika Posjećenosti</h2>
+<p class="lead">Prikaz broja dolazaka korisnika u tekućem mjesecu.</p>
+<hr>
+
+<div *ngIf="monthlyVisits$ | async as visits">
+  <table *ngIf="visits.length > 0; else noVisits" class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Korisnik</th>
+        <th scope="col">Broj dolazaka (ovaj mjesec)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let visit of visits; let i = index">
+        <th scope="row">{{ i + 1 }}</th>
+        <td>{{ visit.userName }}</td>
+        <td>{{ visit.visitCount }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #noVisits>
+    <div class="alert alert-info">Ovaj mjesec još nije bilo zabilježenih dolazaka.</div>
+  </ng-template>
+</div>

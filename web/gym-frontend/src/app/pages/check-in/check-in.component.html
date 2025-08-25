@@ -1,0 +1,18 @@
+<div class="text-center">
+  <h2>Prijava</h2>
+  <div class="alert" [ngClass]="{
+    'alert-info': messageType === 'info',
+    'alert-success': messageType === 'success',
+    'alert-danger': messageType === 'danger'
+  }">
+    {{ message }}
+  </div>
+
+  <div class="scanner-container">
+    <zxing-scanner 
+      [enable]="scannerEnabled"
+      (scanSuccess)="onScanSuccess($event)">
+    </zxing-scanner>
+  </div>
+
+</div> 

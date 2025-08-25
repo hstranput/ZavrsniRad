@@ -1,0 +1,46 @@
+<div class="modal-header">
+  <h4 class="modal-title">Dodaj novog korisnika</h4>
+  <button type="button" class="btn-close" aria-label="Close" (click)="activeModal.dismiss()"></button>
+</div>
+<div class="modal-body">
+  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Ime</label>
+      <input type="text" formControlName="name" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['name'].errors }">
+      <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">Polje je obavezno.</div>
+    </div>
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['email'].errors }">
+      <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+         <div *ngIf="f['email'].errors['required']">Email je obavezan.</div>
+         <div *ngIf="f['email'].errors['email']">Email nije ispravnog formata.</div>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="password" class="form-label">Lozinka</label>
+      <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f['password'].errors }">
+       <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+         <div *ngIf="f['password'].errors['required']">Lozinka je obavezna.</div>
+         <div *ngIf="f['password'].errors['minlength']">Lozinka mora imati barem 6 znakova.</div>
+      </div>
+    </div>
+    <div class="mb-3">
+       <label for="role" class="form-label">Uloga</label>
+       <select formControlName="role" class="form-select">
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+       </select>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="activeModal.dismiss()">Odustani</button>
+      <button type="submit" class="btn btn-primary" [disabled]="loading">
+        <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+        Spremi
+      </button>
+    </div>
+  </form>
+</div>

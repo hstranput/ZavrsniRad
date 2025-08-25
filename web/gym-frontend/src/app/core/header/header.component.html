@@ -1,0 +1,45 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/">Pametna teretana</a>
+
+    <button class="navbar-toggler" type="button" (click)="isMenuCollapsed = !isMenuCollapsed">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [ngbCollapse]="isMenuCollapsed">
+      <ul class="navbar-nav ms-auto d-flex align-items-center">
+
+        <ng-container *ngIf="!(authService.user$ | async)">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/login" (click)="isMenuCollapsed = true">Login</a>
+          </li>
+        </ng-container>
+
+        <ng-container *ngIf="authService.user$ | async as user">
+          <li class="nav-item" *ngIf="user.role === 'admin'">
+            <a class="nav-link" routerLink="/admin/dashboard" (click)="isMenuCollapsed = true">Kontrolna ploča</a>
+          </li>
+          <li class="nav-item" *ngIf="user.role === 'admin'">
+            <a class="nav-link" routerLink="/admin/stats" (click)="isMenuCollapsed = true">Statistika</a>
+          </li>
+          <li class="nav-item" *ngIf="user.role === 'admin'">
+            <a class="nav-link" routerLink="/display-qr" (click)="isMenuCollapsed = true">Prikaži QR</a>
+          </li>
+          <li class="nav-item" *ngIf="user.role === 'user'">
+            <a class="nav-link" routerLink="/dashboard" (click)="isMenuCollapsed = true">Korisnička ploča</a>
+          </li>
+          <li class="nav-item" *ngIf="user.role === 'user'">
+  <a class="nav-link" routerLink="/check-in">Prijava QR kodom</a>
+</li>
+          <li class="nav-item">
+            <span class="navbar-text me-3">Pozdrav, {{ user.name | firstName }}</span>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light" (click)="logout()">Odjava</button>
+          </li>
+        </ng-container>
+
+      </ul>
+    </div>
+  </div>
+</nav>
