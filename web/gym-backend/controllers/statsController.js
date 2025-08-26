@@ -105,7 +105,7 @@ exports.getMonthlyVisits = async (req, res) => {
                     visitCount: { $size: '$monthlyCheckIns' }
                 }
             },
-            { $sort: { visits: -1 } }
+            { $sort: { visitCount: -1 } }
         ])
 
         res.json(report)
