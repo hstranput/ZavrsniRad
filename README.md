@@ -76,7 +76,8 @@ ng serve
 ng serve --host 0.0.0.0 --ssl
 # tada će biti ispisane adrese u terminalu na kojima se može pristupiti web aplikaciji
 # za računalo sam koristio prvu adresu koja je ispisana (npr. https://localhost:4200/)
-# mobitel treba biti povezan na istu mrežu kao i računalo i za mobitel se koristi adresa koja je ispisana pod Network (npr. https://<ip_adresa>:4200/)
+# mobitel treba biti povezan na istu mrežu kao i računalo i za
+# mobitel se koristi adresa koja je ispisana pod Network (npr. https://<ip_adresa>:4200/)
 
 ```
 ### Postavljanje ugrađenog sustava
