@@ -68,7 +68,7 @@ cd web
 cd gym-frontend
 
 # Instaliranje svih ovisnosti (--legacy-per-deps koristiti zbog nekompatibilnosti verzija)
-# npm install --legacy-peer-deps
+npm install --legacy-peer-deps
 
 # pokrenuti
 ng serve
