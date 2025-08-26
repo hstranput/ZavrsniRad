@@ -97,8 +97,7 @@ exports.getMonthlyVisits = async (req, res) => {
                     as: 'monthlyCheckIns' // polje u koje se spremaju rezultati
                 }
             },
-            // ako netko nema niti jedan check-in, preskoci
-            { $match: { monthlyCheckIns: { $ne: [] } } },
+            
             {
                 $project: {
                     _id: 0,
