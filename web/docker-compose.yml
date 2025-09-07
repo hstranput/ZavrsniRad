@@ -1,0 +1,25 @@
+services:
+  # Backend servis (Node.js)
+  backend:
+    build: ./gym-backend
+    ports:
+      - "3000:3000"
+    environment:
+      # Ove varijable će se povući iz vaše .env datoteke
+      - MONGO_URI=${MONGO_URI}
+      - MQTT_HOST=${MQTT_HOST}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWORD=${MQTT_PASSWORD}
+    
+
+  # Frontend servis (Angular s 'ng serve' i live-reload)
+  frontend:
+    build: ./gym-frontend
+    ports:
+      - "4200:4200"
+    volumes:
+      # Ove dvije linije su ključne za live-reload.
+      # One "zrcali" vaš lokalni kod u kontejner,
+      # omogućujući da se promjene odmah vide.
+      - ./gym-frontend:/usr/src/app
+      - /usr/src/app/node_modules

@@ -2,17 +2,6 @@ const SensorData = require('../models/SensorData')
 const User = require('../models/User')
 const CheckIn = require('../models/CheckIn')
 
-// Helper koji vraća početak i kraj dana
-
-function getTodayRange() {
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-
-    const endOfDay = new Date()
-    endOfDay.setHours(23, 59, 59, 999)
-
-    return { start: startOfDay, end: endOfDay }
-}
 
 // podatci sa senzora
 exports.getLatestSensorData = async (req, res) => {
@@ -51,27 +40,90 @@ exports.getOccupancy = async (req, res) => {
 }
 
 // Dnevna statistika
+
+
 exports.getDailyStats = async (req, res) => {
     try {
-        const { start, end } = getTodayRange()
+        // Dobivamo danasnji datum kao string u formatu 'YYYY-MM-DD' za hrvatsku vremensku zonu.
+        // Ovo je referentna vrijednost s kojom cemo usporedivati.
+        const todayString = new Intl.DateTimeFormat('fr-CA', {
+            timeZone: 'Europe/Zagreb'
+        }).format(new Date());
 
-        const daily = await CheckIn.find({
-            checkInTime: { $gte: start, $lte: end }
-        })
-            .populate('user', 'name email')  // dohvati ime i email usera
-            .sort({ checkInTime: -1 }) // najnoviji prvi
+       
 
-        res.json(daily)
+        const daily = await CheckIn.aggregate([
+            //  dodaj novo polje koje predstavlja datum check-ina u hrvatskoj zoni
+            {
+                $addFields: {
+                    'checkInDateLocal': {
+                        $dateToString: {
+                            format: '%Y-%m-%d', // formatiraj u 'YYYY-MM-DD'
+                            date: '$checkInTime',
+                            timezone: 'Europe/Zagreb' // konvertiraj u hrvatsku vremensku zonu
+                        }
+                    }
+                }
+            },
+
+            // Filtriraj samo one dokumente gdje se datumi podudaraju
+            {
+                $match: {
+                    'checkInDateLocal': todayString
+                }
+            },
+            
+            //  Dohvati podatke o korisniku 
+            {
+                $lookup: {
+                    from: 'users', // Ime kolekcije za korisnike
+                    localField: 'user',
+                    foreignField: '_id',
+                    as: 'userData'
+                }
+            },
+
+            //  Makni podatke o korisniku da ne budu u polju
+            {
+                $unwind: '$userData'
+            },
+            
+            //  Sortiramo rezultate po vremenu, od najnovijeg prema najstarijem
+            {
+                $sort: {
+                    checkInTime: -1
+                }
+            },
+
+            // Formatiraj konačni output
+            {
+                $project: {
+                    _id: 1,
+                    checkInTime: 1,
+                    checkOutTime: 1,
+                    user: { // Ručno rekreiramo "populate" objekt
+                        _id: '$userData._id',
+                        name: '$userData.name',
+                        email: '$userData.email'
+                    }
+                }
+            }
+        ]);
+
+        
+
+        res.json(daily);
+
     } catch (error) {
-        console.error('Greška u getDailyStats:', error)
-        res.status(500).send('Server Error (daily stats)')
+        console.error('*** GREŠKA U getDailyStats ***:', error);
+        res.status(500).send('Server Error (daily stats)');
     }
-}
+};
 
 // Mjesecna statistika
 exports.getMonthlyVisits = async (req, res) => {
     try {
-        // početak trenutnog mjeseca (npr. 1.8.2025.)
+        // pocetak trenutnog mjeseca (npr. 1.8.2025.)
         const now = new Date()
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
 
